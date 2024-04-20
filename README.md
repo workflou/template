@@ -1,6 +1,6 @@
 # workflou/template
 
-A simple project template using [Echo](http://echo.labstack.com), [HTMX](http://htmx.org), [AlpineJS](https://alpinejs.dev), [Tailwind](http://tailwindcss.com) and [Air](https://github.com/cosmtrek/air).
+A simple project template using [Echo](http://echo.labstack.com), [Templ](http://templ.guide), [HTMX](http://htmx.org), [AlpineJS](https://alpinejs.dev), [Tailwind](http://tailwindcss.com) and [Air](https://github.com/cosmtrek/air).
 
 ## Local development
 
