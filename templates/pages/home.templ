@@ -1,0 +1,16 @@
+package pages
+
+import "workflou/template/auth"
+import "workflou/template/templates/layouts"
+
+type HomeDTO struct {
+	User auth.User
+}
+
+templ Home(dto HomeDTO) {
+	@layouts.Base("Home Page") {
+		<div class="p-4">
+			Welcome, <strong>{ dto.User.Email }</strong>!
+		</div>
+	}
+}
