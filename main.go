@@ -8,7 +8,10 @@ import (
 )
 
 func main() {
-	h := &handler{}
+	db := mustNewDatabase("postgres://postgres:postgres@localhost:5432/postgres")
+	h := &handler{
+		DB: db,
+	}
 	m := middlewareStack(recoverMiddleware, loggingMiddleware)
 	r := http.NewServeMux()
 

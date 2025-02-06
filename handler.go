@@ -1,12 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"html/template"
 	"net/http"
 	"template/html"
 )
 
 type handler struct {
+	DB *sql.DB
 }
 
 func (h *handler) Home() http.HandlerFunc {
