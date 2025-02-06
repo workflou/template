@@ -1,20 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+	"template/static"
 )
 
 func main() {
+	h := &handler{}
 	m := middlewareStack(recoverMiddleware, loggingMiddleware)
-
 	r := http.NewServeMux()
 
-	r.HandleFunc("/{$}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello World")
-	})
+	r.HandleFunc("/{$}", h.Home())
+	r.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
 	s := http.Server{
 		Addr:    ":4000",
@@ -22,6 +21,5 @@ func main() {
 	}
 
 	slog.Info("http://localhost:4000")
-
 	log.Fatal(s.ListenAndServe())
 }
