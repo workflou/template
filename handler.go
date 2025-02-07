@@ -18,3 +18,11 @@ func (h *handler) Home() http.HandlerFunc {
 		t.Execute(w, nil)
 	}
 }
+
+func (h *handler) LoginPage() http.HandlerFunc {
+	t := template.Must(template.ParseFS(html.FS, "layout.html", "login.html"))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		t.Execute(w, nil)
+	}
+}
