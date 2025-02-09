@@ -23,10 +23,10 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
-	router.HandleFunc("/login", handler.LoginPage())
+	router.HandleFunc("/login", handler.LoginPage)
 
 	authRouter := http.NewServeMux()
-	authRouter.HandleFunc("/{$}", handler.Home())
+	authRouter.HandleFunc("/{$}", handler.HomePage)
 
 	router.Handle("/", authMiddleware(authRouter))
 

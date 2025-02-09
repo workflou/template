@@ -2,27 +2,18 @@ package main
 
 import (
 	"database/sql"
-	"html/template"
 	"net/http"
-	"template/html"
+	"template/view"
 )
 
 type handler struct {
 	DB *sql.DB
 }
 
-func (h *handler) Home() http.HandlerFunc {
-	t := template.Must(template.ParseFS(html.FS, "layout.html", "home.html"))
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		t.Execute(w, nil)
-	}
+func (h *handler) HomePage(w http.ResponseWriter, r *http.Request) {
+	view.HomePage().Render(r.Context(), w)
 }
 
-func (h *handler) LoginPage() http.HandlerFunc {
-	t := template.Must(template.ParseFS(html.FS, "layout.html", "login.html"))
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		t.Execute(w, nil)
-	}
+func (h *handler) LoginPage(w http.ResponseWriter, r *http.Request) {
+	view.LoginPage().Render(r.Context(), w)
 }
