@@ -1,13 +1,13 @@
 package main
 
 import (
-	"database/sql"
 	"net/http"
+	"template/store"
 	"template/view"
 )
 
 type handler struct {
-	DB *sql.DB
+	Store *store.Queries
 }
 
 func (h *handler) HomePage(w http.ResponseWriter, r *http.Request) {
