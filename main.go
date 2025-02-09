@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 	"log/slog"
@@ -18,19 +17,9 @@ func main() {
 	flag.Parse()
 
 	db := mustNewDatabase(*dsn)
-	st := store.New(db)
-
-	_, err := st.GetUserByID(context.Background(), 1)
-	if err != nil {
-		st.CreateUser(context.Background(), store.CreateUserParams{
-			Name:     "Test User",
-			Email:    "test@example.com",
-			Password: "password", // todo
-		})
-	}
 
 	handler := &handler{
-		Store: st,
+		Store: store.New(db),
 	}
 	middleware := middlewareStack(recoverMiddleware, loggingMiddleware)
 
