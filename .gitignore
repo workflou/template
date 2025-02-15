@@ -1,2 +1,3 @@
 tmp/
 *_templ.go
+static/css/dist.css
