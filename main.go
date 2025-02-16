@@ -1,36 +1,39 @@
 package main
 
 import (
+	"embed"
+	"encoding/json"
 	"flag"
+	"io/fs"
 	"log"
 	"log/slog"
 	"net/http"
-	"template/static"
-	"template/store"
 )
 
 var (
+	//go:embed ui/dist/*
+	uiFS embed.FS
+
 	dsn = flag.String("dsn", "postgres://postgres:postgres@localhost:5432/postgres", "database connection string")
 )
 
 func main() {
 	flag.Parse()
 
-	db := mustNewDatabase(*dsn)
+	// db := mustNewDatabase(*dsn)
 
-	handler := &handler{
-		Store: store.New(db),
-	}
 	middleware := middlewareStack(recoverMiddleware, loggingMiddleware)
 
 	router := http.NewServeMux()
-	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
-	router.HandleFunc("/login", handler.LoginPage)
 
-	authRouter := http.NewServeMux()
-	authRouter.HandleFunc("/{$}", handler.HomePage)
+	dist, _ := fs.Sub(uiFS, "ui/dist")
+	router.Handle("/", http.FileServer(http.FS(dist)))
 
-	router.Handle("/", authMiddleware(authRouter))
+	v1 := http.NewServeMux()
+	v1.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]string{"message": "hello, world"})
+	}))
+	router.Handle("/v1", authMiddleware(v1))
 
 	s := http.Server{
 		Addr:    ":4000",
