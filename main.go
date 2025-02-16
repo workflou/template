@@ -27,7 +27,7 @@ func main() {
 	router := http.NewServeMux()
 
 	dist, _ := fs.Sub(uiFS, "ui/dist")
-	router.Handle("/", http.FileServer(http.FS(dist)))
+	router.Handle("/", uiMiddleware(http.FileServer(http.FS(dist))))
 
 	v1 := http.NewServeMux()
 	v1.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
