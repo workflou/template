@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"template/schema"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
+	_ "modernc.org/sqlite"
 )
 
 func mustNewDatabase(dsn string) *sql.DB {
-	db, err := sql.Open("pgx", dsn)
+	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -20,7 +20,7 @@ func mustNewDatabase(dsn string) *sql.DB {
 
 	goose.SetBaseFS(schema.FS)
 
-	if err = goose.SetDialect("postgres"); err != nil {
+	if err = goose.SetDialect("sqlite3"); err != nil {
 		panic(err)
 	}
 
