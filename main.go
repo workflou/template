@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	dsn = flag.String("dsn", "postgres://postgres:postgres@localhost:5432/postgres", "database connection string")
+	dsn = flag.String("dsn", ":memory:", "database connection string")
 )
 
 func main() {
