@@ -3,7 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
+  args_bin = [ "-dsn", "file:./db.sqlite?cache=shared&mode=memory"]
   bin = "./tmp/main"
   cmd = "make build"
   delay = 1000
