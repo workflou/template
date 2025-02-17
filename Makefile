@@ -1,9 +1,6 @@
 watch:
 	air -c .air.toml
 
-dev:
-	go run .
-
 build: templ sqlc
 	go build -o ./tmp/main .
 
