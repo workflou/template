@@ -27,10 +27,10 @@ func main() {
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 	router.HandleFunc("/login", handler.LoginPage)
 
-	authRouter := http.NewServeMux()
-	authRouter.HandleFunc("/{$}", handler.HomePage)
+	userRouter := http.NewServeMux()
+	userRouter.HandleFunc("/{$}", handler.HomePage)
 
-	router.Handle("/", authMiddleware(authRouter))
+	router.Handle("/", authMiddleware(userRouter))
 
 	s := http.Server{
 		Addr:    ":4000",
