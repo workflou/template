@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func mustNewDatabase(dsn string) *sql.DB {
+func MustNewDatabase(dsn string) *sql.DB {
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		panic(err)

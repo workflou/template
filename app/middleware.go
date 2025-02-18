@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -8,11 +8,11 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-type middleware func(http.Handler) http.Handler
+type Middleware func(http.Handler) http.Handler
 
 // todo: add "new" prefix
 
-func middlewareStack(m ...middleware) middleware {
+func NewMiddlewareStack(m ...Middleware) Middleware {
 	return func(h http.Handler) http.Handler {
 		for i := len(m) - 1; i >= 0; i-- {
 			h = m[i](h)

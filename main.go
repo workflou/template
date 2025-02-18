@@ -5,7 +5,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	"template/static"
+	"template/app"
 	"template/store"
 )
 
@@ -16,25 +16,12 @@ var (
 func main() {
 	flag.Parse()
 
-	db := mustNewDatabase(*dsn)
-
-	handler := &handler{
-		Store: store.New(db),
-	}
-	middleware := middlewareStack(recoverMiddleware, loggingMiddleware)
-
-	router := http.NewServeMux()
-	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
-	router.HandleFunc("/login", handler.LoginPage)
-
-	userRouter := http.NewServeMux()
-	userRouter.HandleFunc("/{$}", handler.HomePage)
-
-	router.Handle("/", authMiddleware(userRouter))
+	db := app.MustNewDatabase(*dsn)
+	handler := app.NewHandler(store.New(db))
 
 	s := http.Server{
 		Addr:    ":4000",
-		Handler: middleware(router),
+		Handler: handler,
 	}
 
 	slog.Info("http://localhost:4000")
