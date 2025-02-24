@@ -1,8 +1,8 @@
-watch:
-	go tool github.com/air-verse/air -c .air.toml
+run: templ sqlc
+	go run ./cmd
 
 build: templ sqlc
-	go build -o ./tmp/main .
+	go build -o ./tmp/main ./cmd
 
 .PHONY: test
 test:

@@ -5,25 +5,52 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	"template/app"
+	"os"
+	"os/signal"
+
+	"template/static"
 	"template/store"
 )
 
-var (
-	dsn = flag.String("dsn", ":memory:", "database connection string")
-)
-
 func main() {
+	dsn := flag.String("dsn", ":memory:", "database connection string")
 	flag.Parse()
 
-	db := app.MustNewDatabase(*dsn)
-	handler := app.NewHandler(store.New(db))
+	db := MustNewDatabase(*dsn)
+
+	middleware := NewMiddlewareStack(recoverMiddleware, loggingMiddleware)
+
+	router := http.NewServeMux()
+	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
+
+	accountHandler := &AccountHandler{
+		Store: store.New(db),
+	}
+
+	router.HandleFunc("/login", accountHandler.LoginPage)
+
+	homeHandler := &HomeHandler{}
+
+	userRouter := http.NewServeMux()
+	userRouter.HandleFunc("/{$}", homeHandler.HomePage)
+
+	router.Handle("/", authMiddleware(userRouter))
 
 	s := http.Server{
 		Addr:    ":4000",
-		Handler: handler,
+		Handler: middleware(router),
 	}
 
 	slog.Info("http://localhost:4000")
-	log.Fatal(s.ListenAndServe())
+
+	go func() {
+		log.Fatal(s.ListenAndServe())
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+
+	<-quit
+
+	slog.Info("shutting down")
 }

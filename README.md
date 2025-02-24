@@ -3,7 +3,6 @@
 Features:
 - Go with stdlib
 - Templ views
-- Hot reloading
 - Sqlc queries
 
 ## Local development
