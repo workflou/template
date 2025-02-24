@@ -1,8 +1,5 @@
 run: templ sqlc
-	go run ./cmd
-
-build: templ sqlc
-	go build -o ./tmp/main ./cmd
+	go run .
 
 .PHONY: test
 test:

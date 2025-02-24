@@ -18,7 +18,7 @@ func main() {
 
 	db := MustNewDatabase(*dsn)
 
-	middleware := NewMiddlewareStack(recoverMiddleware, loggingMiddleware)
+	middleware := NewMiddlewareStack(NewRecoverMiddleware(), NewLoggingMiddleware())
 
 	router := http.NewServeMux()
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
@@ -34,7 +34,7 @@ func main() {
 	userRouter := http.NewServeMux()
 	userRouter.HandleFunc("/{$}", homeHandler.HomePage)
 
-	router.Handle("/", authMiddleware(userRouter))
+	router.Handle("/", NewAuthMiddleware()(userRouter))
 
 	s := http.Server{
 		Addr:    ":4000",

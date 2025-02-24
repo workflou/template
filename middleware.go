@@ -22,16 +22,18 @@ func NewMiddlewareStack(m ...Middleware) Middleware {
 	}
 }
 
-func recoverMiddleware(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer func() {
-			if err := recover(); err != nil {
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			}
-		}()
+func NewRecoverMiddleware() Middleware {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			defer func() {
+				if err := recover(); err != nil {
+					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				}
+			}()
 
-		h.ServeHTTP(w, r)
-	})
+			h.ServeHTTP(w, r)
+		})
+	}
 }
 
 type wrappedResponseWriter struct {
@@ -44,31 +46,35 @@ func (w *wrappedResponseWriter) WriteHeader(status int) {
 	w.ResponseWriter.WriteHeader(status)
 }
 
-func loggingMiddleware(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t := time.Now()
+func NewLoggingMiddleware() Middleware {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			t := time.Now()
 
-		rw := &wrappedResponseWriter{w, http.StatusOK}
+			rw := &wrappedResponseWriter{w, http.StatusOK}
 
-		h.ServeHTTP(rw, r)
+			h.ServeHTTP(rw, r)
 
-		slog.Info(fmt.Sprintf("%d %s %s %s", rw.status, r.Method, r.URL.Path, time.Since(t)))
-	})
+			slog.Info(fmt.Sprintf("%d %s %s %s", rw.status, r.Method, r.URL.Path, time.Since(t)))
+		})
+	}
 }
 
-func authMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c, err := r.Cookie("session")
-		if err != nil {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-			return
-		}
+func NewAuthMiddleware() Middleware {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			c, err := r.Cookie("session")
+			if err != nil {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
 
-		if c.Value == "" {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-			return
-		}
+			if c.Value == "" {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
 
-		next.ServeHTTP(w, r)
-	})
+			h.ServeHTTP(w, r)
+		})
+	}
 }
