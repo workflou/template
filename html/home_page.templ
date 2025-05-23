@@ -1,0 +1,27 @@
+package html
+
+templ HomePage() {
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home Page</title>
+        <link rel="stylesheet" href="/static/css/dist.css?v=1">
+        <script src="/static/js/htmx@2.0.4.min.js"></script>
+    </head>
+    <body>
+        <div>
+            <h1 class="text-xl">Home Page</h1>
+
+            <div id="message"></div>
+
+            <button
+                hx-get="/v1/test"
+                hx-target="#message"
+                hx-swap="innerHTML"
+                >Click me</button>
+        </div>
+    </body>
+    </html>
+}
